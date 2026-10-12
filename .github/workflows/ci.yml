@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    name: Lint, build and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: PHP syntax
+        run: find backend server.php -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Install
+        run: |
+          npm ci
+          pip install -r analytics/requirements.txt pytest
+
+      - name: TypeScript build and unit tests
+        run: npm run test:unit
+
+      - name: Forecaster tests
+        run: cd analytics && python -m pytest -v
+
+  system:
+    name: API and browser tests on the full stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Start the stack
+        run: |
+          docker compose up -d --build
+          timeout 180 sh -c 'until curl -sf http://localhost:8000/api/products > /dev/null; do sleep 3; done'
+
+      - name: Install
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: API tests
+        run: npm run test:api
+
+      - name: Browser tests
+        run: npm run test:e2e
+
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results/
