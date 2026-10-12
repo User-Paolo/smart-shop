@@ -1,0 +1,25 @@
+# Dependencies
+
+analytics/.venv/
+__pycache__/
+
+# Runtime output (logs, forecast job status)
+backend/storage/logs/*
+!backend/storage/logs/.gitkeep
+backend/storage/forecast_status.json
+backend/storage/*.tmp
+
+# Local environment / secrets
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build output and test reports
+frontend/js/
+node_modules/
+test-results/
+playwright-report/
