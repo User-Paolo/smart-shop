@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Smart Shop</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="module" src="/js/admin.js"></script>
+</head>
+<body class="admin">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="Back to the shop">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span class="brand-name">Smart Shop <span class="brand-tag">Admin</span></span>
+      </a>
+      <div class="tabs" role="tablist" aria-label="Dashboard sections">
+        <button role="tab" id="tab-forecasts" data-tab="forecasts" aria-controls="panel-forecasts">Forecasts</button>
+        <button role="tab" id="tab-inventory" data-tab="inventory" aria-controls="panel-inventory">Inventory</button>
+        <button role="tab" id="tab-orders" data-tab="orders" aria-controls="panel-orders">Orders</button>
+      </div>
+      <nav class="user-nav" aria-label="Account">
+        <a class="btn btn-ghost" href="/">View shop</a>
+        <span id="admin-name" class="user-chip"></span>
+        <button id="logout" class="btn btn-ghost" type="button">Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section id="panel-forecasts" role="tabpanel" aria-labelledby="tab-forecasts">
+      <div class="panel-head">
+        <div>
+          <h1>Predictive analytics</h1>
+          <p class="muted">7-day demand forecast from the Python analytics service, compared with current stock.</p>
+        </div>
+        <div class="panel-tools">
+          <p id="job-status" class="job-status" aria-live="polite"></p>
+          <button id="run-forecast" class="btn btn-primary" type="button">Run forecast</button>
+        </div>
+      </div>
+
+      <div id="kpis" class="kpis"></div>
+
+      <div class="grid-2">
+        <article class="card">
+          <header class="card-head">
+            <h2>Predicted demand vs stock</h2>
+            <p class="muted small">Bar = forecast units over 7 days · tick = units in stock</p>
+          </header>
+          <canvas id="risk-canvas" class="chart" role="img" aria-label="Forecast demand compared with stock for every product"></canvas>
+          <ul class="legend">
+            <li><span class="swatch swatch-high"></span>High risk</li>
+            <li><span class="swatch swatch-medium"></span>Watch</li>
+            <li><span class="swatch swatch-low"></span>Healthy</li>
+            <li><span class="swatch swatch-tick"></span>Current stock</li>
+          </ul>
+        </article>
+
+        <article id="detail-card" class="card">
+          <header class="card-head">
+            <h2 id="detail-title">Product detail</h2>
+            <p id="detail-sub" class="muted small"></p>
+          </header>
+          <canvas id="detail-canvas" class="chart" role="img" aria-label="Daily sales history and forecast for the selected product"></canvas>
+          <ul class="legend">
+            <li><span class="swatch swatch-actual"></span>Actual daily sales</li>
+            <li><span class="swatch swatch-forecast"></span>Forecast</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="card">
+        <header class="card-head"><h2>Stock-out risk by product</h2></header>
+        <div id="forecast-table" class="table-wrap"></div>
+      </article>
+    </section>
+
+    <section id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory" hidden>
+      <div class="panel-head">
+        <div>
+          <h1>Inventory</h1>
+          <p class="muted">Add products, update prices and adjust stock levels.</p>
+        </div>
+        <div class="panel-tools">
+          <label class="sr-only" for="inventory-search">Search inventory</label>
+          <input id="inventory-search" type="search" placeholder="Search name or SKU" maxlength="100">
+          <button id="add-product" class="btn btn-primary" type="button">Add product</button>
+        </div>
+      </div>
+      <article class="card"><div id="inventory-table" class="table-wrap"></div></article>
+    </section>
+
+    <section id="panel-orders" role="tabpanel" aria-labelledby="tab-orders" hidden>
+      <div class="panel-head">
+        <div>
+          <h1>Order fulfilment</h1>
+          <p class="muted">Ship, deliver or cancel customer orders. Cancelling returns items to stock.</p>
+        </div>
+        <div class="panel-tools">
+          <label class="sr-only" for="order-filter">Filter by status</label>
+          <select id="order-filter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <article class="card"><div id="orders-table" class="table-wrap"></div></article>
+    </section>
+  </main>
+</body>
+</html>
