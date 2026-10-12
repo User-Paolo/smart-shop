@@ -1,0 +1,24 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smart_shop
+    volumes:
+      - ./database/create_user.sql:/docker-entrypoint-initdb.d/1_create_user.sql:ro
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/2_schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 3s
+      retries: 40
+
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      APP_TIMEZONE: Europe/Athens
+      JWT_SECRET: change-me-for-anything-real-0123456789
+    depends_on:
+      db:
+        condition: service_healthy

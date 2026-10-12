@@ -1,0 +1,7 @@
+.git
+node_modules
+frontend/js
+test-results
+playwright-report
+backend/storage/forecast_status.json
+backend/storage/logs/*.log
